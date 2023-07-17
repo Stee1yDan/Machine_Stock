@@ -1,0 +1,220 @@
+:root
+{
+    --light-blue: #7ECAD8;
+    --deep-blue: #47ABD1;
+    --greenish-yellow: #DFDA05;
+    --yellowish-green: #ACC711;
+    --dark-summer-green: #78B833;
+    --yellowish-orange: #F1C328;
+    --pomelo-red: #D83F29;
+    --purplish-pink: #D01D7B;
+}
+
+body::before
+{
+    display: block;
+    content: '';
+    height: 70px;
+}
+
+.styled-text-pink
+{
+    font-family: Roboto, monospace;
+    font-weight: 100;
+    font-size: 20px;
+    color: #FFFFFF;
+    background-color: #D01D7B;
+    width: auto;
+}
+
+.styled-text-yellow
+{
+    font-family: Roboto, monospace;
+    font-weight: 100;
+    font-size: 20px;
+    color: #000000;
+    background-color: #DFDA05;
+    width: auto;
+}
+
+.styled-text-black
+{
+    font-family: Roboto, monospace;
+    font-weight: 300;
+    font-size: 30px;
+    color: #FFFFFF;
+    background-color: #000000;
+    width: auto;
+}
+
+.banner-h1
+{
+    font-family: Roboto, monospace;
+    font-weight: 700;
+    font-size: 9.8vw;
+    margin-left: 14.2vw;
+    margin-top: 25vh;
+}
+
+/*Boilerplate*/
+
+.bg-gray
+{
+    background-color: gray;
+}
+
+.bg-light-blue
+{
+    background-color: #7ECAD8;
+}
+
+.bg-purplish-pink
+{
+    background-color: #D01D7B;
+}
+
+.bg-deep-blue
+{
+    background-color: #47ABD1;
+}
+
+.bg-greenish-yellow
+{
+    background-color: #DFDA05;
+}
+
+.bg-dark-summer-green
+{
+    background-color: #78B833;
+}
+
+.bg-pomelo-red
+{
+    background-color: #D83F29;
+}
+
+.mt-lg-55-sm-30
+{
+    margin-top: 55vh;
+}
+
+.mt-lg-59-sm-32
+{
+    margin-top: 59vh;
+}
+
+.mt-lg-63-sm-34
+{
+    margin-top: 63.5vh;
+}
+
+.ml-65
+{
+    margin-left: 65vw;
+}
+
+.ml-10
+{
+    margin-left: 10vw;
+}
+
+.ml-15
+{
+    margin-left: 15vw;
+}
+
+.ml-20
+{
+    margin-left: 20vw;
+}
+
+.ml-30
+{
+    margin-left: 30vw;
+}
+
+.vw-10
+{
+    width: 10vw;
+}
+
+.vw-15
+{
+    width: 15vw;
+}
+
+.vw-60
+{
+    width: 60vw;
+}
+
+.vh-custom-small
+{
+    height: 70vh;
+}
+
+.vh-custom
+{
+    height: 100vh;
+}
+
+.news-input
+{
+    width: 50%;
+}
+
+@media(max-width: 767px)
+{
+
+    .styled-text-yellow
+    {
+        font-size: 12px;
+    }
+
+    .styled-text-pink
+    {
+        font-size: 12px;
+    }
+
+    .styled-text-black
+    {
+        font-size: 12px;
+    }
+
+    .banner-h1
+    {
+        margin-top: 15vh;
+    }
+
+    .news-input
+    {
+        width: 100%;
+    }
+
+    .vh-custom
+    {
+        height: 40vh;
+    }
+
+    .vh-custom-small
+    {
+        height: 20vh;
+    }
+
+    .mt-lg-55-sm-30
+    {
+        margin-top: 30vh;
+    }
+
+    .mt-lg-59-sm-32
+    {
+        margin-top: 32vh;
+    }
+
+    .mt-lg-63-sm-34
+    {
+        margin-top: 34vh;
+    }
+
+
+}
