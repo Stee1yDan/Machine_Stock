@@ -3,7 +3,13 @@
 // let Stomp = require('webstomp-client');
 
 const ctx = document.getElementById('myChart');
-let placeholder = document.getElementById('predictionPlaceholder')
+let predictionPrice = document.getElementById('predictionPrice');
+let currentPrice = document.getElementById('currentPrice');
+let lastPrediction = document.getElementById('lastResult');
+let lastPrice = document.getElementById('lastPrice')
+
+let pPrice;
+let cPrice;
 
 let stockChart = buildChart(ctx)
 let counter = 0
@@ -51,7 +57,13 @@ function connect() {
 
             if(response.s.includes("prediction"))
             {
-                placeholder.textContent = "For: " + response.t + ", Prediction is " + response.p;
+                if (!predictionPrice.textContent.includes("Waiting"))
+                {
+                    lastPrediction.textContent = "Last prediction was: " + pPrice + "$";
+                    lastPrice.textContent = "Real price was: " + cPrice + "$"
+                }
+                pPrice = Math.round(response.p);
+                predictionPrice.textContent = "For: " + response.t + ", Prediction is " + pPrice + "$";
             }
             else
             {
@@ -64,6 +76,10 @@ function connect() {
 
                 stockChart.options.scales.y.max = Math.round(response.p/10) * 10 + 10;
                 stockChart.options.scales.y.min = Math.round(response.p/10) * 10 - 10;
+
+
+                cPrice = Math.round(response.p);
+                currentPrice.textContent = "Current price is: " + cPrice + "$";
 
                 // if (stockChart.options.scales.y.max < response.p)
                 // {
