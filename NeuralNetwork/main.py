@@ -53,11 +53,11 @@ x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
 # Create Neural Network
 
 model = Sequential()
-model.add(LSTM(units=100, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
 model.add(Dropout(0.2))
-model.add(LSTM(units=100, return_sequences=True))
+model.add(LSTM(units=50, return_sequences=True))
 model.add(Dropout(0.2))
-model.add(LSTM(units=100))
+model.add(LSTM(units=50))
 model.add(Dropout(0.2))
 model.add(Dense(units=1))
 
