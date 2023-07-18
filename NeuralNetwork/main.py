@@ -8,6 +8,7 @@ import datetime as dt
 import tensorflow
 import yfinance as yf
 import socket
+from math import ceil
 
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow import keras
@@ -29,6 +30,7 @@ crypto_currency = 'BTC'
 against_currency = 'USD'
 
 prediction_units = 7
+future_units = 5
 
 # Get Data
 start = dt.datetime.now() - dt.timedelta(days=prediction_units)
@@ -43,9 +45,9 @@ scaled_data = scaler.fit_transform(data['Adj Close'].values.reshape(-1, 1))
 
 x_train, y_train = [], []
 
-for x in range(prediction_units, len(scaled_data)):
+for x in range(prediction_units, len(scaled_data)-future_units):
     x_train.append(scaled_data[x - prediction_units:x, 0])
-    y_train.append(scaled_data[x, 0])
+    y_train.append(scaled_data[x + future_units, 0])
 
 x_train, y_train = np.array(x_train), np.array(y_train)
 x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
@@ -81,6 +83,8 @@ while True:
 
     print(test_data)
 
+    test_data.reset_index(inplace=True)
+
     total_dataset = pd.concat((data['Adj Close'], test_data['Adj Close']), axis=0)
 
     model_iputs = total_dataset[len(total_dataset) - len(test_data) - prediction_units:].values
@@ -114,9 +118,11 @@ while True:
     prediction = model.predict(real_data)
     prediction = scaler.inverse_transform(prediction)
 
+    current_timestamp = test_data['Datetime'][len(test_data['Datetime']) - 1].timestamp()
+
     stock_info["s"] = str(stock_info["s"]) + "-prediction"
     stock_info["p"] = str(prediction[0][0])
-    stock_info["t"] = int(str(stock_info["t"])) + 60000
+    stock_info["t"] = int(current_timestamp + (60 * future_units))
 
     print(prediction[0])
 
