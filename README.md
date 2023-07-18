@@ -14,4 +14,4 @@ Is used to return stock prediction for next 60 seconds. (The model is working, b
 
 Simple html page that was build with boostrap 5. Retrieves info from socket using Stomp Client and SockJS. Displays retrieved info with ChartJS.
 
-![FireShot Capture 023 - Machine;Stock - localhost](https://github.com/Stee1yDan/Machine_Stock/assets/125751951/0e4af496-b1d9-4b54-9912-19fe18a7f5e6)
+![FireShot Capture 023 - Machine;Stock - localhost](https://github.com/Stee1yDan/Machine_Stock/assets/125751951/86468f10-7792-4c9f-a073-35e357bb1b96)
