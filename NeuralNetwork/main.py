@@ -28,60 +28,61 @@ server_socket.listen(1)  # Limit the number of connections to 1
 crypto_currency = 'BTC'
 against_currency = 'USD'
 
+socket_data = pd.Series([])
 prediction_units = 7
 
-# Get Data
-start = dt.datetime.now() - dt.timedelta(days=prediction_units)
-end = dt.datetime.now()
-
-data = yf.download('BTC-USD', start, end, interval='1m')
-# btcusd['Open'].plot(figsize=(10,6))
-
-# Prepare Data For Model Training
-scaler = MinMaxScaler(feature_range=(0, 1))
-scaled_data = scaler.fit_transform(data['Adj Close'].values.reshape(-1, 1))
-
-x_train, y_train = [], []
-
-for x in range(prediction_units, len(scaled_data)):
-    x_train.append(scaled_data[x - prediction_units:x, 0])
-    y_train.append(scaled_data[x, 0])
-
-x_train, y_train = np.array(x_train), np.array(y_train)
-x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
-
-# Create Neural Network
-
-model = Sequential()
-model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50, return_sequences=True))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50))
-model.add(Dropout(0.2))
-model.add(Dense(units=1))
-
-model.compile(optimizer='adam', loss='mean_squared_error')
-model.fit(x_train, y_train, batch_size=32)
-
-# Adding the info for analysis
-
 while True:
+
     client_socket, client_address = server_socket.accept()
     print("Accepted connection from {}:{}".format(client_address[0], client_address[1]))
 
     stock_info_str = client_socket.recv(1024).decode()
     stock_info = json.loads(stock_info_str)
+    # Get Data
+    start = dt.datetime.now() - dt.timedelta(days=prediction_units)
+    end = dt.datetime.now()
 
-    test_start = dt.datetime.now() - dt.timedelta(days=1)
+    data = yf.download('BTC-USD', start, end, interval='1m')
+    # btcusd['Open'].plot(figsize=(10,6))
+
+    # Prepare Data For Model Training
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(data['Adj Close'].values.reshape(-1, 1))
+
+    x_train, y_train = [], []
+
+    for x in range(prediction_units, len(scaled_data)):
+        x_train.append(scaled_data[x - prediction_units:x, 0])
+        y_train.append(scaled_data[x, 0])
+
+    x_train, y_train = np.array(x_train), np.array(y_train)
+    x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
+
+    # Create Neural Network
+
+    model = Sequential()
+    model.add(LSTM(units=100, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=100, return_sequences=True))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=100))
+    model.add(Dropout(0.2))
+    model.add(Dense(units=1))
+
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    model.fit(x_train, y_train, batch_size=32)
+
+    # Adding the info for analysis`
+    test_start = dt.datetime.now() - dt.timedelta(days=prediction_units)
     test_end = dt.datetime.now()
 
     test_data = yf.download('BTC-USD', test_start, test_end, interval='1m')
-    actual_prices = test_data['Adj Close'].values
+    adj_close_ = test_data['Adj Close']._append(pd.Series([stock_info["p"]]))
+    actual_prices = adj_close_.values
 
-    print(test_data)
+    print(adj_close_)
 
-    total_dataset = pd.concat((data['Adj Close'], test_data['Adj Close']), axis=0)
+    total_dataset = pd.concat((data['Adj Close'], adj_close_), axis=0)
 
     model_iputs = total_dataset[len(total_dataset) - len(test_data) - prediction_units:].values
     model_iputs = model_iputs.reshape(-1, 1)

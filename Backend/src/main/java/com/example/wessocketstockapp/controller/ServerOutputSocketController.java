@@ -37,7 +37,7 @@ public class ServerOutputSocketController
         }
     }
 
-    public void sendStockInfo(String message)
+    public void sendStockInfo(String message) //TODO: Make it Async
     {
         simpMessagingTemplate.convertAndSend("/topic/stock-info", MessageConverter.convertBaseMessageTime(message));
     }

@@ -5,6 +5,8 @@ import com.example.wessocketstockapp.enumeration.StockTicker;
 import com.example.wessocketstockapp.model.RequestMessage;
 import com.example.wessocketstockapp.utility.MessageConverter;
 import lombok.Getter;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,6 +19,7 @@ import java.io.IOException;
 
 @Service
 @Getter
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ServerInputSocketController extends TextWebSocketHandler
 {
     private final ServerOutputSocketController serverOutputSocketController;
@@ -47,8 +50,8 @@ public class ServerInputSocketController extends TextWebSocketHandler
         {
             try
             {
-                serverOutputSocketController.addStockInfoToStack(buf);
                 neuralNetworkSocketController.addStockInfoToStack(buf);
+                serverOutputSocketController.addStockInfoToStack(buf);
             }
             catch (Exception e)
             {
