@@ -30,6 +30,9 @@ against_currency = 'USD'
 
 prediction_units = 7
 
+last_prediction = 1
+last_price = 1
+
 while True:
     client_socket, client_address = server_socket.accept()
     print("Accepted connection from {}:{}".format(client_address[0], client_address[1]))
@@ -38,6 +41,16 @@ while True:
     stock_info = json.loads(stock_info_str)
 
     socket_data = pd.Series(stock_info["p"])
+    current_price = stock_info["p"]
+
+    last_prediction_weight = current_price - last_prediction
+    last_price_weight = current_price - last_price
+
+    prediction_coefficient = last_price_weight / (last_price_weight + last_prediction_weight)
+    price_coefficient = last_prediction_weight / (last_price_weight + last_prediction_weight)
+
+    print("prediction_coefficient: " + str(prediction_coefficient))
+    print("price_coefficient: " + str(price_coefficient))
 
     # Get Data
     start = dt.datetime.now() - dt.timedelta(days=prediction_units)
@@ -116,11 +129,17 @@ while True:
     prediction = model.predict(real_data)
     prediction = scaler.inverse_transform(prediction)
 
-    stock_info["s"] = str(stock_info["s"]) + "-prediction"
-    stock_info["p"] = str((prediction[0][0] + float(stock_info["p"]))/2)
-    stock_info["t"] = int(str(stock_info["t"])) + (60000)
+    balanced_prediction = prediction[0][0] * prediction_coefficient + stock_info["p"] * price_coefficient
 
-    print(prediction[0])
+    stock_info["s"] = str(stock_info["s"]) + "-prediction"
+    stock_info["p"] = str(balanced_prediction)
+    stock_info["t"] = int(str(stock_info["t"])) + 60000
+
+    last_prediction = prediction[0][0]
+    last_price = float(stock_info["p"])
+
+    print(last_prediction)
+    print(balanced_prediction)
 
     # Send the prediction back to the client
     client_socket.sendall(json.dumps(stock_info).encode())
