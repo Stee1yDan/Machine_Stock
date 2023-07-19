@@ -28,16 +28,17 @@ server_socket.listen(1)  # Limit the number of connections to 1
 crypto_currency = 'BTC'
 against_currency = 'USD'
 
-socket_data = pd.Series([])
-prediction_units = 6
+prediction_units = 7
 
 while True:
-
     client_socket, client_address = server_socket.accept()
     print("Accepted connection from {}:{}".format(client_address[0], client_address[1]))
 
     stock_info_str = client_socket.recv(1024).decode()
     stock_info = json.loads(stock_info_str)
+
+    socket_data = pd.Series(stock_info["p"])
+
     # Get Data
     start = dt.datetime.now() - dt.timedelta(days=prediction_units)
     end = dt.datetime.now()
@@ -61,11 +62,11 @@ while True:
     # Create Neural Network
 
     model = Sequential()
-    model.add(LSTM(units=10, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+    model.add(LSTM(units=100, return_sequences=True, input_shape=(x_train.shape[1], 1)))
     model.add(Dropout(0.2))
-    model.add(LSTM(units=10, return_sequences=True))
+    model.add(LSTM(units=100, return_sequences=True))
     model.add(Dropout(0.2))
-    model.add(LSTM(units=10))
+    model.add(LSTM(units=100))
     model.add(Dropout(0.2))
     model.add(Dense(units=1))
 
@@ -73,11 +74,11 @@ while True:
     model.fit(x_train, y_train, batch_size=32)
 
     # Adding the info for analysis`
-    test_start = dt.datetime.now() - dt.timedelta(days=prediction_units)
+    test_start = dt.datetime.now() - dt.timedelta(days=1)
     test_end = dt.datetime.now()
 
     test_data = yf.download('BTC-USD', test_start, test_end, interval='1m')
-    adj_close_ = test_data['Adj Close']
+    adj_close_ = test_data['Adj Close']._append(socket_data)
     actual_prices = adj_close_.values
 
     print(adj_close_)
@@ -116,8 +117,8 @@ while True:
     prediction = scaler.inverse_transform(prediction)
 
     stock_info["s"] = str(stock_info["s"]) + "-prediction"
-    stock_info["p"] = str(prediction[0][0])
-    stock_info["t"] = int(str(stock_info["t"])) + 60000
+    stock_info["p"] = str((prediction[0][0] + float(stock_info["p"]))/2)
+    stock_info["t"] = int(str(stock_info["t"])) + (60000)
 
     print(prediction[0])
 
