@@ -29,7 +29,7 @@ crypto_currency = 'BTC'
 against_currency = 'USD'
 
 socket_data = pd.Series([])
-prediction_units = 7
+prediction_units = 6
 
 while True:
 
@@ -61,11 +61,11 @@ while True:
     # Create Neural Network
 
     model = Sequential()
-    model.add(LSTM(units=100, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+    model.add(LSTM(units=10, return_sequences=True, input_shape=(x_train.shape[1], 1)))
     model.add(Dropout(0.2))
-    model.add(LSTM(units=100, return_sequences=True))
+    model.add(LSTM(units=10, return_sequences=True))
     model.add(Dropout(0.2))
-    model.add(LSTM(units=100))
+    model.add(LSTM(units=10))
     model.add(Dropout(0.2))
     model.add(Dense(units=1))
 
@@ -77,7 +77,7 @@ while True:
     test_end = dt.datetime.now()
 
     test_data = yf.download('BTC-USD', test_start, test_end, interval='1m')
-    adj_close_ = test_data['Adj Close']._append(pd.Series([stock_info["p"]]))
+    adj_close_ = test_data['Adj Close']
     actual_prices = adj_close_.values
 
     print(adj_close_)
