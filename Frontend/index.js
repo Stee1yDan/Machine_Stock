@@ -5,8 +5,7 @@
 const ctx = document.getElementById('myChart');
 let predictionPrice = document.getElementById('predictionPrice');
 let currentPrice = document.getElementById('currentPrice');
-let lastPrediction = document.getElementById('lastResult');
-let lastPrice = document.getElementById('lastPrice')
+let lastPredictionResult = document.getElementById('lastResult');
 
 let pPrice;
 let cPrice;
@@ -59,8 +58,7 @@ function connect() {
             {
                 if (!predictionPrice.textContent.includes("Waiting"))
                 {
-                    lastPrediction.textContent = "Last prediction was: " + pPrice + "$";
-                    lastPrice.textContent = "Real price was: " + cPrice + "$"
+                    lastPredictionResult.textContent = "Last prediction delta was: " + (pPrice - cPrice) + "$";
                 }
                 pPrice = Math.round(response.p);
                 predictionPrice.textContent = "For: " + response.t + ", Prediction is " + pPrice + "$";
