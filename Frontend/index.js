@@ -58,7 +58,7 @@ function connect() {
             {
                 if (!predictionPrice.textContent.includes("Waiting"))
                 {
-                    lastPredictionResult.textContent = "Last prediction delta was: " + (pPrice - cPrice) + "$";
+                    lastPredictionResult.textContent = "Last prediction delta was: " + Math.abs(pPrice - cPrice) + "$";
                 }
                 pPrice = Math.round(response.p);
                 predictionPrice.textContent = "For: " + response.t + ", Prediction is " + pPrice + "$";
@@ -75,19 +75,8 @@ function connect() {
                 stockChart.options.scales.y.max = Math.round(response.p/10) * 10 + 10;
                 stockChart.options.scales.y.min = Math.round(response.p/10) * 10 - 10;
 
-
                 cPrice = Math.round(response.p);
                 currentPrice.textContent = "Current price is: " + cPrice + "$";
-
-                // if (stockChart.options.scales.y.max < response.p)
-                // {
-                //     stockChart.options.scales.y.max = Math.round(response.p/10) * 10 + 10;
-                // }
-                //
-                // if (stockChart.options.scales.y.min > response.p)
-                // {
-                //     stockChart.options.scales.y.min = Math.round(response.p/10) * 10 - 10;
-                // }
 
                 addData(stockChart, response.t, response.p)
             }

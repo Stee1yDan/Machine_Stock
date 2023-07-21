@@ -32,7 +32,7 @@ public class ServerOutputSocketController
     {
         if (!messageLoad.isEmpty())
         {
-            simpMessagingTemplate.convertAndSend("/topic/stock-info",  MessageConverter.convertBaseMessageTime(messageLoad.pop()));
+            simpMessagingTemplate.convertAndSend("/topic/stock-info",  messageLoad.pop());
             messageLoad.clear();
         }
     }
@@ -40,6 +40,6 @@ public class ServerOutputSocketController
     @Async
     public void sendStockInfo(String message) //TODO: Make it Async
     {
-        simpMessagingTemplate.convertAndSend("/topic/stock-info", MessageConverter.convertBaseMessageTime(message));
+        simpMessagingTemplate.convertAndSend("/topic/stock-info", message);
     }
 }

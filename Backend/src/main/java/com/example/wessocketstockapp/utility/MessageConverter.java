@@ -13,12 +13,6 @@ public class MessageConverter
         return JsonMapper.convertToJsonString(baseStockInfo);
     }
 
-    public static String convertBaseMessageTime(String jsonMessage)
-    {
-        BaseStockInfo baseStockInfo = (BaseStockInfo) JsonMapper.convertFromJsonString(jsonMessage, BaseStockInfo.class);
-        baseStockInfo.setT(TimeConverter.getFormatedDate(baseStockInfo.getT()));
-        return JsonMapper.convertToJsonString(baseStockInfo);
-    }
     public static WebSocketMessage<String> convertToWebSocketMessage(RequestMessage requestMessage)
     {
         return new TextMessage(JsonMapper.convertToJsonString(requestMessage));
