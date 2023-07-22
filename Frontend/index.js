@@ -15,7 +15,6 @@ let counter = 0
 
 connect()
 
-
 function buildChart(current_ctx) {
     return new Chart(current_ctx, {
         type: 'line',
@@ -46,13 +45,21 @@ function buildChart(current_ctx) {
         }
     });
 }
-function connect() {
+
+function formatDate(timestamp)
+{
+    let formattedDate = new Date(parseInt(timestamp)).toLocaleString('ru-RU');
+    return formattedDate.substring(formattedDate.indexOf(",") + 1, formattedDate.length);
+}
+function connect(locales) {
     socket = new SockJS("http://localhost:8080/ws");
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function () {
+    stompClient.connect({}, function (locales) {
         stompClient.subscribe('/topic/stock-info', function (data) {
             let response = JSON.parse(data.body);
-            console.log(response.t)
+            let formattedDate = formatDate(response.t)
+
+            console.log(response.t + " " + formattedDate);
 
             if(response.s.includes("prediction"))
             {
@@ -61,7 +68,7 @@ function connect() {
                     lastPredictionResult.textContent = "Last prediction delta was: " + Math.abs(pPrice - cPrice) + "$";
                 }
                 pPrice = Math.round(response.p);
-                predictionPrice.textContent = "For: " + response.t + ", Prediction is " + pPrice + "$";
+                predictionPrice.textContent = "For: " + formattedDate + ", Prediction is " + pPrice + "$";
             }
             else
             {
@@ -78,7 +85,7 @@ function connect() {
                 cPrice = Math.round(response.p);
                 currentPrice.textContent = "Current price is: " + cPrice + "$";
 
-                addData(stockChart, response.t, response.p)
+                addData(stockChart, formattedDate, response.p)
             }
         });
     });
