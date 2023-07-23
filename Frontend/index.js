@@ -45,6 +45,13 @@ async function sendRequest(http, url, postObj, delay) {
     }(), delay);
 }
 
+async function updateDelta(delay) {
+    setInterval(function rec()
+    {
+
+    }(), delay);
+}
+
 requestForMinutes.onreadystatechange = (e) => {
     if (requestForMinutes.readyState > 3)
     {

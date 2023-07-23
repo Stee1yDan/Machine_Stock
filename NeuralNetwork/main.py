@@ -29,6 +29,7 @@ crypto_currency = 'BTC'
 against_currency = 'USD'
 
 prediction_units = 7
+future_units = 5
 
 last_prediction = 1
 last_price = 1
@@ -49,9 +50,6 @@ while True:
     prediction_coefficient = last_price_weight / (last_price_weight + last_prediction_weight)
     price_coefficient = last_prediction_weight / (last_price_weight + last_prediction_weight)
 
-    print("prediction_coefficient: " + str(prediction_coefficient))
-    print("price_coefficient: " + str(price_coefficient))
-
     # Get Data
     start = dt.datetime.now() - dt.timedelta(days=prediction_units)
     end = dt.datetime.now()
@@ -65,9 +63,9 @@ while True:
 
     x_train, y_train = [], []
 
-    for x in range(prediction_units, len(scaled_data)):
+    for x in range(prediction_units, len(scaled_data) - future_units):
         x_train.append(scaled_data[x - prediction_units:x, 0])
-        y_train.append(scaled_data[x, 0])
+        y_train.append(scaled_data[x + future_units, 0])
 
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
@@ -131,15 +129,20 @@ while True:
 
     balanced_prediction = prediction[0][0] * prediction_coefficient + stock_info["p"] * price_coefficient
 
+    print("prediction_coefficient: " + str(prediction_coefficient))
+    print("price_coefficient: " + str(price_coefficient))
+
+    print("Prediction is: " + str(prediction[0][0]))
+    print("Balanced prediction is " + str(balanced_prediction))
+    print("Current price is: " + str(stock_info["p"]))
+
     stock_info["s"] = str(stock_info["s"]) + "-prediction"
     stock_info["p"] = str(balanced_prediction)
     stock_info["t"] = float(str(stock_info["t"])) + 60000
 
+
     last_prediction = prediction[0][0]
     last_price = float(stock_info["p"])
-
-    print(last_prediction)
-    print(balanced_prediction)
 
     # Send the prediction back to the client
     client_socket.sendall(json.dumps(stock_info).encode())
