@@ -11,13 +11,13 @@ let pPrice;
 let cPrice;
 
 
-let hoursTimeInfo = [0,0,0];
-let minutesTimeInfo = [0,0,0];
-let secondsTimeInfo = [0,0,0];
+let hoursTimeInfo = [];
+let minutesTimeInfo = [];
+let secondsTimeInfo = [];
 
-let hoursPriceInfo = [0,0,0];
-let minutesPriceInfo = [0,0,0];
-let secondsPriceInfo = [0,0,0];
+let hoursPriceInfo = [];
+let minutesPriceInfo = [];
+let secondsPriceInfo = [];
 
 let minuteDelay = 1000 * 60 * 5;
 let hourDelay = 1000 * 60 * 60;
@@ -106,8 +106,7 @@ function updateData(chart) {
 
     console.log(dates)
 
-    chart.options.scales.y.max = Math.round(Math.max(...fullPriceArray) / 100) * 100 + 50
-    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 50
+    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 10
 
     chart.data.labels = fullTimeArray;
     chart.data.datasets[0].data = fullPriceArray;
@@ -127,7 +126,6 @@ function buildChart(current_ctx) {
         options: {
             scales: {
                 y: {
-                    max: 1,
                     min: 0,
                     ticks: {
                         stepSize: 10
@@ -179,7 +177,7 @@ function connect(locales) {
                 while (secondsPriceInfo.length < 3)
                 {
                     secondsPriceInfo.push(response.p);
-                    secondsTimeInfo.push(response.t); //TODO: Make
+                    secondsTimeInfo.push(response.t);
                 }
                 updateData(stockChart);
 
