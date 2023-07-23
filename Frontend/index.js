@@ -36,7 +36,7 @@ class RequestBody
     }
 }
 
-async function sendRequest(http, url, postObj, delay) {
+function sendRequest(http, url, postObj, delay) {
     setInterval(function rec()
     {
         http.open("POST", url);
@@ -96,7 +96,7 @@ function updateData(chart) {
     let fullTimeArray = getTimeFullArray();
     let fullPriceArray = getPriceFullArray();
 
-    fullTimeArray = fullTimeArray.map(element => formatDate(element))
+    console.log(fullTimeArray)
 
     chart.options.scales.y.max = Math.round(Math.max(...fullPriceArray) / 100) * 100 * 1.2
     chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 * 0.9
