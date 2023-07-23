@@ -1,6 +1,6 @@
 package com.example.wessocketstockapp.controller;
 
-import com.example.wessocketstockapp.utility.MessageConverter;
+import com.example.wessocketstockapp.interfaces.CustomSocketHandler;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,9 +11,9 @@ import java.util.Stack;
 
 @Controller
 @EnableScheduling
-public class ServerOutputSocketController
+public class ServerOutputSocketController implements CustomSocketHandler
 {
-    private final SimpMessagingTemplate simpMessagingTemplate; //TODO: set socket heartbeat
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     private Stack<String> messageLoad = new Stack<>();
 
@@ -21,14 +21,15 @@ public class ServerOutputSocketController
     {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
-
+    @Override
     public void addStockInfoToStack(String message)
     {
         messageLoad.push(message);
     }
     @Scheduled(fixedRate = 1000)
     @Async
-    public void sendStockInfo()
+    @Override
+    public void sendPackage()
     {
         if (!messageLoad.isEmpty())
         {
@@ -38,7 +39,8 @@ public class ServerOutputSocketController
     }
 
     @Async
-    public void sendStockInfo(String message) //TODO: Make it Async
+    @Override
+    public void sendPackage(String message) //TODO: Make it Async
     {
         simpMessagingTemplate.convertAndSend("/topic/stock-info", message);
     }

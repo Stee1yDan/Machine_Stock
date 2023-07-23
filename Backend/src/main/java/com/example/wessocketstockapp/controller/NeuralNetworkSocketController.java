@@ -1,5 +1,6 @@
 package com.example.wessocketstockapp.controller;
 
+import com.example.wessocketstockapp.interfaces.CustomSocketHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,7 +12,7 @@ import java.util.Stack;
 
 @Controller
 @EnableScheduling
-public class NeuralNetworkSocketController //TODO: Add inheritance form interface interface
+public class NeuralNetworkSocketController implements CustomSocketHandler
 {
     private static String pythonHost = "0.0.0.0";
     private static int pythonPort = 12345;
@@ -24,7 +25,7 @@ public class NeuralNetworkSocketController //TODO: Add inheritance form interfac
     {
         this.serverOutputSocketController = serverOutputSocketController;
     }
-
+    @Override
     public void addStockInfoToStack(String message)
     {
         messageLoad.push(message);
@@ -46,6 +47,7 @@ public class NeuralNetworkSocketController //TODO: Add inheritance form interfac
 
     @Scheduled(fixedRate = 60000)
     @Async
+    @Override
     public void sendPackage()
     {
         try (Socket socket = stockSocket(pythonHost, pythonPort);
@@ -61,7 +63,32 @@ public class NeuralNetworkSocketController //TODO: Add inheritance form interfac
 
             String prediction = in.readLine();
             System.out.println("Server answer: " + prediction);
-            serverOutputSocketController.sendStockInfo(prediction);
+            serverOutputSocketController.sendPackage(prediction);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Couldn't send the package");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendPackage(String message)
+    {
+        try (Socket socket = stockSocket(pythonHost, pythonPort);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
+        )
+        {
+            out.write(message);
+            out.newLine();
+            out.flush();
+
+            messageLoad.clear();
+
+            String prediction = in.readLine();
+            System.out.println("Server answer: " + prediction);
+            serverOutputSocketController.sendPackage(prediction);
         }
         catch (Exception e)
         {
