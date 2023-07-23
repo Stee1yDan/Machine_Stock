@@ -11,12 +11,12 @@ let pPrice;
 let cPrice;
 
 
-let hoursTimeInfo = [];
-let minutesTimeInfo = [];
+let hoursTimeInfo = [0,0,0];
+let minutesTimeInfo = [0,0,0];
 let secondsTimeInfo = [0,0,0];
 
-let hoursPriceInfo = [];
-let minutesPriceInfo = [];
+let hoursPriceInfo = [0,0,0];
+let minutesPriceInfo = [0,0,0];
 let secondsPriceInfo = [0,0,0];
 
 let minuteDelay = 1000 * 60 * 5;
@@ -36,7 +36,7 @@ class RequestBody
     }
 }
 
-function sendRequest(http, url, postObj, delay) {
+async function sendRequest(http, url, postObj, delay) {
     setInterval(function rec()
     {
         http.open("POST", url);
@@ -51,11 +51,11 @@ requestForMinutes.onreadystatechange = (e) => {
         minutesTimeInfo.length = 0;
         minutesPriceInfo.length = 0;
 
-        let jsonArray = JSON.parse(requestForMinutes.response);
+        let jsonArray1 = JSON.parse(requestForMinutes.response);
 
-        for (i = 0; i < 3; i++) {
-            minutesTimeInfo.push(jsonArray[jsonArray.length - 1 - i].t);
-            minutesPriceInfo.push(jsonArray[jsonArray.length - 1 - i].p)
+        for (i = 3; i > 0; i--) {
+            minutesTimeInfo.push(jsonArray1[jsonArray1.length - 1 - i].t);
+            minutesPriceInfo.push(jsonArray1[jsonArray1.length - 1 - i].p)
         }
         console.log(minutesTimeInfo);
         updateData(stockChart)
@@ -70,7 +70,7 @@ requestForHours.onreadystatechange = (e) => {
 
         let jsonArray = JSON.parse(requestForHours.response);
 
-        for (i = 0; i < 3; i++) {
+        for (i = 3; i > 0; i--) {
             hoursTimeInfo.push(jsonArray[jsonArray.length - 1 - i].t);
             hoursPriceInfo.push(jsonArray[jsonArray.length - 1 - i].p)
         }
@@ -88,18 +88,26 @@ function getPriceFullArray() {
 }
 
 // API gives info with a delay, so more info has to be retrieved that is actually needed
-sendRequest(requestForMinutes,stockURL,new RequestBody("BTC-USD",18000,"5m"),minuteDelay);
 sendRequest(requestForHours,stockURL, new RequestBody("BTC-USD",100000,"1h"),hourDelay);
+sendRequest(requestForMinutes,stockURL,new RequestBody("BTC-USD",18000,"5m"),minuteDelay);
+connect();
 
 function updateData(chart) {
 
     let fullTimeArray = getTimeFullArray();
     let fullPriceArray = getPriceFullArray();
 
-    console.log(fullTimeArray)
+    let dates = [];
 
-    chart.options.scales.y.max = Math.round(Math.max(...fullPriceArray) / 100) * 100 * 1.2
-    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 * 0.9
+    for (i = 0; i < fullTimeArray.length; i++)
+    {
+        fullTimeArray[i] = formatDate(fullTimeArray[i])
+    }
+
+    console.log(dates)
+
+    chart.options.scales.y.max = Math.round(Math.max(...fullPriceArray) / 100) * 100 + 50
+    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 50
 
     chart.data.labels = fullTimeArray;
     chart.data.datasets[0].data = fullPriceArray;
@@ -119,8 +127,8 @@ function buildChart(current_ctx) {
         options: {
             scales: {
                 y: {
-                    max: 50,
-                    min: 30,
+                    max: 1,
+                    min: 0,
                     ticks: {
                         stepSize: 10
                     }
@@ -147,6 +155,8 @@ function connect(locales) {
             let response = JSON.parse(data.body);
             let formattedDate = formatDate(response.t)
 
+            console.log(response)
+
             console.log(response.t + " " + formattedDate);
 
             if(response.s.includes("prediction"))
@@ -160,20 +170,21 @@ function connect(locales) {
             }
             else
             {
-                counter++;
 
-                if (counter > 10)
+                if (secondsPriceInfo.length === 3)
                 {
-                    removeData(stockChart)
+                    secondsPriceInfo.shift();
+                    secondsTimeInfo.shift();
                 }
-
-                stockChart.options.scales.y.max = Math.round(response.p/10) * 10 + 10;
-                stockChart.options.scales.y.min = Math.round(response.p/10) * 10 - 10;
+                while (secondsPriceInfo.length < 3)
+                {
+                    secondsPriceInfo.push(response.p);
+                    secondsTimeInfo.push(response.t); //TODO: Make
+                }
+                updateData(stockChart);
 
                 cPrice = Math.round(response.p);
                 currentPrice.textContent = "Current price is: " + cPrice + "$";
-
-                addData(stockChart, formattedDate, response.p)
             }
         });
     });

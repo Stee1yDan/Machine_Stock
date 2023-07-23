@@ -47,7 +47,7 @@ def start():  # put application's code here
     global mutex
 
     while mutex != 1:
-        print("something")
+        pass
 
     mutex = 0
 
@@ -69,7 +69,7 @@ def start():  # put application's code here
     prices = data['Adj Close']
 
     for stock_price, stock_timestamp in zip(prices, timestamps):
-        stock_objects.append(StockObject(ticker, float(stock_price), float(stock_timestamp.timestamp())).to_dict())
+        stock_objects.append(StockObject(ticker, float(stock_price), float(stock_timestamp.timestamp() * 1000)).to_dict())
 
     print(stock_objects)
 

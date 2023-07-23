@@ -133,7 +133,7 @@ while True:
 
     stock_info["s"] = str(stock_info["s"]) + "-prediction"
     stock_info["p"] = str(balanced_prediction)
-    stock_info["t"] = int(str(stock_info["t"])) + 60000
+    stock_info["t"] = float(str(stock_info["t"])) + 60000
 
     last_prediction = prediction[0][0]
     last_price = float(stock_info["p"])
