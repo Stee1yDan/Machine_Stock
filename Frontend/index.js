@@ -13,7 +13,7 @@ let cPrice;
 
 let hoursTimeInfo = [];
 let minutesTimeInfo = [];
-let secondsTimeInfo = [];
+let secondsTimeInfo = [0,0,0];
 
 let hoursPriceInfo = [];
 let minutesPriceInfo = [];
@@ -21,6 +21,9 @@ let secondsPriceInfo = [0,0,0];
 
 let minuteDelay = 1000 * 60 * 5;
 let hourDelay = 1000 * 60 * 60;
+
+let stockChart = buildChart(ctx)
+let counter = 0
 
 
 class RequestBody
@@ -33,8 +36,7 @@ class RequestBody
     }
 }
 
-async function sendRequest(http, url, postObj, delay)
-{
+async function sendRequest(http, url, postObj, delay) {
     setInterval(function rec()
     {
         http.open("POST", url);
@@ -43,8 +45,7 @@ async function sendRequest(http, url, postObj, delay)
     }(), delay);
 }
 
-requestForMinutes.onreadystatechange = (e) =>
-{
+requestForMinutes.onreadystatechange = (e) => {
     if (requestForMinutes.readyState > 3)
     {
         minutesTimeInfo.length = 0;
@@ -57,11 +58,11 @@ requestForMinutes.onreadystatechange = (e) =>
             minutesPriceInfo.push(jsonArray[jsonArray.length - 1 - i].p)
         }
         console.log(minutesTimeInfo);
+        updateData(stockChart)
     }
 }
 
-requestForHours.onreadystatechange = (e) =>
-{
+requestForHours.onreadystatechange = (e) => {
     if (requestForHours.readyState > 3)
     {
         hoursTimeInfo.length = 0;
@@ -74,17 +75,36 @@ requestForHours.onreadystatechange = (e) =>
             hoursPriceInfo.push(jsonArray[jsonArray.length - 1 - i].p)
         }
         console.log(hoursTimeInfo);
+        updateData(stockChart)
     }
+}
+
+function getTimeFullArray() {
+    return hoursTimeInfo.concat(minutesTimeInfo.concat(secondsTimeInfo));
+}
+
+function getPriceFullArray() {
+    return hoursPriceInfo.concat(minutesPriceInfo.concat(secondsPriceInfo));
 }
 
 // API gives info with a delay, so more info has to be retrieved that is actually needed
 sendRequest(requestForMinutes,stockURL,new RequestBody("BTC-USD",18000,"5m"),minuteDelay);
 sendRequest(requestForHours,stockURL, new RequestBody("BTC-USD",100000,"1h"),hourDelay);
 
-let stockChart = buildChart(ctx)
-let counter = 0
+function updateData(chart) {
 
-connect()
+    let fullTimeArray = getTimeFullArray();
+    let fullPriceArray = getPriceFullArray();
+
+    fullTimeArray = fullTimeArray.map(element => formatDate(element))
+
+    chart.options.scales.y.max = Math.round(Math.max(...fullPriceArray) / 100) * 100 * 1.2
+    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 * 0.9
+
+    chart.data.labels = fullTimeArray;
+    chart.data.datasets[0].data = fullPriceArray;
+    chart.update();
+}
 
 function buildChart(current_ctx) {
     return new Chart(current_ctx, {
@@ -92,7 +112,6 @@ function buildChart(current_ctx) {
         data: {
             labels: [],
             datasets: [{
-                label: '',
                 data: [],
                 borderWidth: 1
             }]
@@ -100,8 +119,8 @@ function buildChart(current_ctx) {
         options: {
             scales: {
                 y: {
-                    max: 1,
-                    min: 0,
+                    max: 50,
+                    min: 30,
                     ticks: {
                         stepSize: 10
                     }
