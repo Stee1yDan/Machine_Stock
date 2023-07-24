@@ -34,6 +34,41 @@ future_units = 5
 last_prediction = 1
 last_price = 1
 
+# Get Data
+start = dt.datetime.now() - dt.timedelta(days=prediction_units)
+end = dt.datetime.now()
+
+data = yf.download('BTC-USD', start, end, interval='1m')
+test_data = data['Adj Close']
+print(test_data)
+
+# Prepare Data For Model Training
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(data['Adj Close'].values.reshape(-1, 1))
+
+x_train, y_train = [], []
+
+for x in range(prediction_units, len(scaled_data) - future_units):
+    x_train.append(scaled_data[x - prediction_units:x, 0])
+    y_train.append(scaled_data[x + future_units, 0])
+
+x_train, y_train = np.array(x_train), np.array(y_train)
+x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
+
+# Create Neural Network
+
+model = Sequential()
+model.add(LSTM(units=250, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+model.add(Dropout(0.2))
+model.add(LSTM(units=250, return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(units=250))
+model.add(Dropout(0.2))
+model.add(Dense(units=1))
+
+model.compile(optimizer='adam', loss='mean_squared_error')
+model.fit(x_train, y_train, batch_size=32)
+
 while True:
     client_socket, client_address = server_socket.accept()
     print("Accepted connection from {}:{}".format(client_address[0], client_address[1]))
@@ -44,57 +79,19 @@ while True:
     socket_data = pd.Series(stock_info["p"])
     current_price = stock_info["p"]
 
-    last_prediction_weight = current_price - last_prediction
-    last_price_weight = current_price - last_price
+    last_prediction_accuracy = abs(current_price - last_prediction)
+    last_price_accuracy = abs(current_price - last_price)
 
-    prediction_coefficient = last_price_weight / (last_price_weight + last_prediction_weight)
-    price_coefficient = last_prediction_weight / (last_price_weight + last_prediction_weight)
-
-    # Get Data
-    start = dt.datetime.now() - dt.timedelta(days=prediction_units)
-    end = dt.datetime.now()
-
-    data = yf.download('BTC-USD', start, end, interval='1m')
-    # btcusd['Open'].plot(figsize=(10,6))
-
-    # Prepare Data For Model Training
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_data = scaler.fit_transform(data['Adj Close'].values.reshape(-1, 1))
-
-    x_train, y_train = [], []
-
-    for x in range(prediction_units, len(scaled_data) - future_units):
-        x_train.append(scaled_data[x - prediction_units:x, 0])
-        y_train.append(scaled_data[x + future_units, 0])
-
-    x_train, y_train = np.array(x_train), np.array(y_train)
-    x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
-
-    # Create Neural Network
-
-    model = Sequential()
-    model.add(LSTM(units=100, return_sequences=True, input_shape=(x_train.shape[1], 1)))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=100, return_sequences=True))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=100))
-    model.add(Dropout(0.2))
-    model.add(Dense(units=1))
-
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    model.fit(x_train, y_train, batch_size=32)
+    prediction_coefficient = last_price_accuracy / (last_price_accuracy + last_prediction_accuracy)
+    price_coefficient = 1 - prediction_coefficient # == last_prediction_accuracy / (last_price_accuracy + last_prediction_accuracy)
 
     # Adding the info for analysis`
-    test_start = dt.datetime.now() - dt.timedelta(days=1)
-    test_end = dt.datetime.now()
+    test_data = test_data._append(socket_data)
+    actual_prices = test_data.values
 
-    test_data = yf.download('BTC-USD', test_start, test_end, interval='1m')
-    adj_close_ = test_data['Adj Close']._append(socket_data)
-    actual_prices = adj_close_.values
+    print(test_data)
 
-    print(adj_close_)
-
-    total_dataset = pd.concat((data['Adj Close'], adj_close_), axis=0)
+    total_dataset = pd.concat((data['Adj Close'], test_data), axis=0)
 
     model_iputs = total_dataset[len(total_dataset) - len(test_data) - prediction_units:].values
     model_iputs = model_iputs.reshape(-1, 1)
@@ -118,7 +115,7 @@ while True:
     # plt.ylabel('price')
     # plt.show()
 
-    #Predict next day
+    # Predict next day
 
     real_data = [model_iputs[len(model_iputs) + 1 - prediction_units:len(model_iputs) + 1, 0]]
     real_data = np.array(real_data)
@@ -140,7 +137,6 @@ while True:
     stock_info["p"] = str(balanced_prediction)
     stock_info["t"] = float(str(stock_info["t"])) + 60000
 
-
     last_prediction = prediction[0][0]
     last_price = float(stock_info["p"])
 
@@ -149,5 +145,3 @@ while True:
 
     # Close the client socket
     client_socket.close()
-
-

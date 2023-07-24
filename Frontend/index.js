@@ -45,13 +45,6 @@ async function sendRequest(http, url, postObj, delay) {
     }(), delay);
 }
 
-async function updateDelta(delay) {
-    setInterval(function rec()
-    {
-
-    }(), delay);
-}
-
 requestForMinutes.onreadystatechange = (e) => {
     if (requestForMinutes.readyState > 3)
     {
@@ -113,7 +106,7 @@ function updateData(chart) {
 
     console.log(dates)
 
-    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 10
+    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 50
 
     chart.data.labels = fullTimeArray;
     chart.data.datasets[0].data = fullPriceArray;
@@ -163,6 +156,8 @@ function connect(locales) {
             console.log(response)
 
             console.log(response.t + " " + formattedDate);
+
+            stockChart.options.scales.y.min = Math.round(Math.min(...getPriceFullArray()) / 100) * 100 - 50;
 
             if(response.s.includes("prediction"))
             {
