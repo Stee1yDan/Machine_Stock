@@ -10,6 +10,7 @@ import yfinance as yf
 import socket
 
 from sklearn.preprocessing import MinMaxScaler
+from dateutil.tz import tzutc
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM
@@ -58,11 +59,11 @@ x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
 # Create Neural Network
 
 model = Sequential()
-model.add(LSTM(units=250, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+model.add(LSTM(units=50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
 model.add(Dropout(0.2))
-model.add(LSTM(units=250, return_sequences=True))
+model.add(LSTM(units=50, return_sequences=True))
 model.add(Dropout(0.2))
-model.add(LSTM(units=250))
+model.add(LSTM(units=50))
 model.add(Dropout(0.2))
 model.add(Dense(units=1))
 
@@ -76,7 +77,14 @@ while True:
     stock_info_str = client_socket.recv(1024).decode()
     stock_info = json.loads(stock_info_str)
 
-    socket_data = pd.Series(stock_info["p"])
+    unix_timestamp = int(round(float(stock_info["t"])/1000))
+
+    print(unix_timestamp)
+
+    date_time = (dt.datetime.fromtimestamp(unix_timestamp) - dt.timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
+
+
+    socket_data = pd.Series(stock_info["p"], index=[date_time])
     current_price = stock_info["p"]
 
     last_prediction_accuracy = abs(current_price - last_prediction)
