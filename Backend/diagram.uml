@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="-447.0" y="-8.5">com.example.wessocketstockapp.enumeration.RequestType</node>
+    <node x="581.8928571428573" y="-19.5">com.example.wessocketstockapp.controller.ServerOutputSocketController</node>
+    <node x="-84.25" y="533.0">com.example.wessocketstockapp.config.ServerInputSocketConfig</node>
+    <node x="3.0" y="-30.5">com.example.wessocketstockapp.controller.NeuralNetworkSocketController</node>
+    <node x="301.5" y="-196.26509572901324">com.example.wessocketstockapp.interfaces.CustomSocketHandler</node>
+    <node x="-198.0" y="315.0">com.example.wessocketstockapp.controller.ServerInputSocketController</node>
+    <node x="-218.0" y="-20.0">com.example.wessocketstockapp.enumeration.StockTicker</node>
+    <node x="-233.0" y="142.0">com.example.wessocketstockapp.model.RequestMessage</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.example.wessocketstockapp.controller.ServerInputSocketController" target="com.example.wessocketstockapp.model.RequestMessage" relationship="TO_ONE">
+      <point x="95.0" y="-94.0" />
+      <point x="87.0" y="305.0" />
+      <point x="-19.25" y="305.0" />
+      <point x="71.25" y="71.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.model.RequestMessage" target="com.example.wessocketstockapp.enumeration.StockTicker" relationship="TO_ONE">
+      <point x="0.0" y="-71.5" />
+      <point x="-90.5" y="132.0" />
+      <point x="-122.5" y="132.0" />
+      <point x="0.0" y="61.0" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.ServerInputSocketController" target="com.example.wessocketstockapp.controller.NeuralNetworkSocketController" relationship="TO_ONE">
+      <point x="95.0" y="-94.0" />
+      <point x="87.0" y="299.4307805596465" />
+      <point x="125.82731958762884" y="299.4307805596465" />
+      <point x="125.82731958762884" y="300.0" />
+      <point x="197.0" y="300.0" />
+      <point x="0.0" y="71.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.ServerInputSocketController" target="com.example.wessocketstockapp.model.RequestMessage" relationship="CREATE">
+      <point x="-95.0" y="-94.0" />
+      <point x="-103.0" y="305.0" />
+      <point x="-161.75" y="305.0" />
+      <point x="-71.25" y="71.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.NeuralNetworkSocketController" target="com.example.wessocketstockapp.controller.ServerOutputSocketController" relationship="TO_ONE">
+      <point x="194.0" y="-0.0" />
+      <point x="-177.0" y="-0.0" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.config.ServerInputSocketConfig" target="com.example.wessocketstockapp.controller.NeuralNetworkSocketController" relationship="TO_ONE">
+      <point x="93.75" y="-38.5" />
+      <point x="0.0" y="71.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.NeuralNetworkSocketController" target="com.example.wessocketstockapp.interfaces.CustomSocketHandler" relationship="REALIZATION">
+      <point x="0.0" y="-71.5" />
+      <point x="197.0" y="-45.5" />
+      <point x="416.0" y="-45.5" />
+      <point x="0.0" y="49.0" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.model.RequestMessage" target="com.example.wessocketstockapp.enumeration.RequestType" relationship="TO_ONE">
+      <point x="0.0" y="-71.5" />
+      <point x="-90.5" y="132.0" />
+      <point x="-122.5" y="132.0" />
+      <point x="-122.5" y="122.0" />
+      <point x="-347.5" y="122.0" />
+      <point x="0.0" y="49.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.config.ServerInputSocketConfig" target="com.example.wessocketstockapp.controller.ServerOutputSocketController" relationship="TO_ONE">
+      <point x="93.75" y="-38.5" />
+      <point x="197.0" y="523.0" />
+      <point x="237.0" y="523.0" />
+      <point x="237.0" y="122.5" />
+      <point x="758.8928571428573" y="122.5" />
+      <point x="0.0" y="60.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.ServerOutputSocketController" target="com.example.wessocketstockapp.interfaces.CustomSocketHandler" relationship="REALIZATION">
+      <point x="0.0" y="-60.5" />
+      <point x="758.8928571428573" y="-40.5" />
+      <point x="416.0" y="-40.5" />
+      <point x="0.0" y="49.0" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.controller.ServerInputSocketController" target="com.example.wessocketstockapp.controller.ServerOutputSocketController" relationship="TO_ONE">
+      <point x="95.0" y="-94.0" />
+      <point x="87.0" y="305.0" />
+      <point x="130.91016200294553" y="305.0" />
+      <point x="130.91016200294553" y="193.5" />
+      <point x="237.0" y="193.5" />
+      <point x="237.0" y="122.5" />
+      <point x="758.8928571428573" y="122.5" />
+      <point x="0.0" y="60.5" />
+    </edge>
+    <edge source="com.example.wessocketstockapp.config.ServerInputSocketConfig" target="com.example.wessocketstockapp.controller.ServerInputSocketController" relationship="CREATE">
+      <point x="-93.75" y="-38.5" />
+      <point x="9.5" y="523.0" />
+      <point x="-8.0" y="523.0" />
+      <point x="0.0" y="94.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.6884664131812421" showDependencies="true" x="146.2349042709867" y="161.12499999999994" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

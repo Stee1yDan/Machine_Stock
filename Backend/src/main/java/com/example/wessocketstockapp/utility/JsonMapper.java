@@ -1,12 +1,11 @@
 package com.example.wessocketstockapp.utility;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-public class JsonMapper //TODO: Implement good exception handling
+public class JsonMapper
 {
     public static String convertToJsonString(Object object)
     {
@@ -24,7 +23,7 @@ public class JsonMapper //TODO: Implement good exception handling
 
     }
 
-    public static Object convertFromJsonString(String str, Class template)
+    public static Object convertFromJsonString(String str, Class<com.example.wessocketstockapp.model.BaseStockInfo> template)
     {
         try
         {

@@ -31,7 +31,7 @@ public class ServerInputSocketConfig
             WebSocketSession session = client.doHandshake(
                             new ServerInputSocketController(serverOutputSocketController, neuralNetworkSocketController),
                             URI.crypto.getUri())
-                    .get();;
+                    .get();
         }
         catch (Exception e)
         {
