@@ -23,8 +23,6 @@ let minuteDelay = 1000 * 60 * 5;
 let hourDelay = 1000 * 60 * 60;
 
 let stockChart = buildChart(ctx)
-let counter = 0
-
 
 class RequestBody
 {
@@ -106,7 +104,7 @@ function updateData(chart) {
 
     console.log(dates)
 
-    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 100) * 100 - 50
+    chart.options.scales.y.min = Math.round(Math.min(...fullPriceArray) / 10) * 10 - 10
 
     chart.data.labels = fullTimeArray;
     chart.data.datasets[0].data = fullPriceArray;
@@ -141,6 +139,8 @@ function buildChart(current_ctx) {
         }
     });
 }
+
+let testArray = []
 function formatDate(timestamp) {
     let formattedDate = new Date(parseInt(timestamp)).toLocaleString('ru-RU');
     return formattedDate.substring(formattedDate.indexOf(",") + 1, formattedDate.length);
@@ -161,6 +161,8 @@ function connect(locales) {
 
             if(response.s.includes("prediction"))
             {
+                testArray.push(Math.abs(pPrice - cPrice))
+                console.log(testArray)
                 if (!predictionPrice.textContent.includes("Waiting"))
                 {
                     lastPredictionResult.textContent = "Last prediction delta was: " + Math.abs(pPrice - cPrice) + "$";
@@ -209,6 +211,3 @@ function removeData(chart) {
     });
     chart.update();
 }
-
-
-

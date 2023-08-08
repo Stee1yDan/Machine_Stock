@@ -16,7 +16,7 @@ Simple html page that was build with Boostrap 5. Retrieves info from socket usin
 
 ## Python module
 
-Simple API that is used to retrive info through POST request. Built with Flask.
+Simple API that is used to retrieve info from YFinance. Built with Flask.
 
 ![FireShot Capture 030 - Machine;Stock - localhost](https://github.com/Stee1yDan/Machine_Stock/assets/125751951/a737d6cf-53f8-4749-9986-abdbdb7ade8f)
 

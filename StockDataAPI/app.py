@@ -42,7 +42,7 @@ mutex = 1;
 
 
 @app.route('/getStockData', methods=['POST'])
-def start():  # put application's code here
+def start():
 
     global mutex
 

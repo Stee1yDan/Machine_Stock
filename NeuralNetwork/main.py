@@ -30,7 +30,7 @@ crypto_currency = 'BTC'
 against_currency = 'USD'
 
 prediction_units = 7
-future_units = 5
+future_units = 7
 
 last_prediction = 1
 last_price = 1
@@ -91,7 +91,7 @@ while True:
     last_price_accuracy = abs(current_price - last_price)
 
     prediction_coefficient = last_price_accuracy / (last_price_accuracy + last_prediction_accuracy)
-    price_coefficient = 1 - prediction_coefficient # == last_prediction_accuracy / (last_price_accuracy + last_prediction_accuracy)
+    price_coefficient = last_prediction_accuracy / (last_price_accuracy + last_prediction_accuracy)
 
     # Adding the info for analysis`
     test_data = test_data._append(socket_data)
@@ -138,8 +138,8 @@ while True:
     print("price_coefficient: " + str(price_coefficient))
 
     print("Prediction is: " + str(prediction[0][0]))
-    print("Balanced prediction is " + str(balanced_prediction))
     print("Current price is: " + str(stock_info["p"]))
+    print("Balanced prediction is " + str(balanced_prediction))
 
     stock_info["s"] = str(stock_info["s"]) + "-prediction"
     stock_info["p"] = str(balanced_prediction)
