@@ -1,6 +1,6 @@
-package com.machine_stock.emailsender.service.impl;
+package com.machine_stock.service.implementation;
 
-import com.machine_stock.emailsender.service.EmailService;
+import com.machine_stock.service.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,9 @@ import org.thymeleaf.context.Context;
 
 import java.io.File;
 
-import static com.machine_stock.emailsender.util.EmailUtils.getEmailMessage;
+import static com.machine_stock.utils.EmailUtils.getEmailMessage;
+import static com.machine_stock.utils.EmailUtils.getVerificationUrl;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class EmailServiceImpl implements EmailService
 
     @Override
     @Async
-    public void sendBasicEmailMessage(String receiverEmail)
+    public void sendBasicEmailMessage(String receiverEmail, String token)
     {
         try
         {
@@ -39,7 +41,7 @@ public class EmailServiceImpl implements EmailService
             message.setSubject("Accounted listed");
             message.setFrom(emailSender);
             message.setTo(receiverEmail);
-            message.setText(getEmailMessage());
+            message.setText(getEmailMessage(host, token));
             javaMailSender.send(message);
         }
         catch (Exception e)
@@ -51,7 +53,8 @@ public class EmailServiceImpl implements EmailService
     }
 
     @Override
-    public void sendMimeMessageWithAttachment(String receiverEmail) {
+    public void sendMimeMessageWithAttachment(String receiverEmail, String token)
+    {
         try
         {
             MimeMessage message = getMimeMessage();
@@ -60,16 +63,16 @@ public class EmailServiceImpl implements EmailService
             helper.setSubject("New User Account Verification");
             helper.setFrom(emailSender);
             helper.setTo(receiverEmail);
-            helper.setText(getEmailMessage());
+            helper.setText(getEmailMessage(host, token));
 
-//        Add attachments
+            //        Add attachments
             String filePath = System.getProperty("user.home") + "\\Downloads\\fort.jpg";
             FileSystemResource fort = new FileSystemResource(new File(filePath));
             System.out.println(filePath);
             helper.addAttachment(fort.getFilename(), fort);
             javaMailSender.send(message);
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             System.out.println(exception.getMessage());
             throw new RuntimeException(exception.getMessage());
@@ -77,14 +80,38 @@ public class EmailServiceImpl implements EmailService
     }
 
     @Override
-    @Async
-    public void sendHtmlPage(String receiverEmail)
+    public void sendHtmlPage(String receiverEmail, String token)
     {
+        try {
+            Context context = new Context();
 
+            context.setVariable("name",receiverEmail.substring(0,receiverEmail.indexOf("@")));
+            context.setVariable("url", getVerificationUrl(host, token));
+
+            String text = templateEngine.process("emailtemplate", context);
+
+            MimeMessage message = getMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setPriority(1);
+            helper.setSubject("New User Account Verification");
+            helper.setFrom(emailSender);
+            helper.setTo(receiverEmail);
+            helper.setText(text, true);
+            javaMailSender.send(message);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
+        }
     }
+
 
     private MimeMessage getMimeMessage()
     {
         return javaMailSender.createMimeMessage();
+    }
+
+    private String getContentId(String filename)
+    {
+        return "<" + filename + ">";
     }
 }
