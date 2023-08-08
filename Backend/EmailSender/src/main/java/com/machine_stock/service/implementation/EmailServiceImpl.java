@@ -53,7 +53,7 @@ public class EmailServiceImpl implements EmailService
     }
 
     @Override
-    public void sendMimeMessageWithAttachment(String receiverEmail, String token)
+    public void sendMimeMessageWithAttachment(String receiverEmail, String token, String filePath)
     {
         try
         {
@@ -66,7 +66,6 @@ public class EmailServiceImpl implements EmailService
             helper.setText(getEmailMessage(host, token));
 
             //        Add attachments
-            String filePath = System.getProperty("user.home") + "\\Downloads\\fort.jpg";
             FileSystemResource fort = new FileSystemResource(new File(filePath));
             System.out.println(filePath);
             helper.addAttachment(fort.getFilename(), fort);
