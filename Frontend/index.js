@@ -29,7 +29,7 @@ let hourDelay = 1000 * 60 * 60;
 let stockChart = buildChart(ctx)
 
 sendEmailButton.addEventListener("click", function() {
-    sendRequest(dbRequest,saveUserURL,{email: emailHolder.value});
+    sendRequest(dbRequest,saveUserURL,{email: emailHolder.value}); //TODO: Check if the email is valid
 }, false);
 
 class RequestBody

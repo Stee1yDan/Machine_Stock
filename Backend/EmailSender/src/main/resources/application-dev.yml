@@ -12,6 +12,6 @@ ACTIVE_PROFILE: dev
 #Email Config
 EMAIL_HOST: smtp.gmail.com
 EMAIL_PORT: 587
-EMAIL_ID: jabodav.daniel@gmail.com
-EMAIL_PASSWORD: gnrtufamvnqwhtgf
+EMAIL_ID: YOUR_EMAIL
+EMAIL_PASSWORD: YOUR_APP_KEY
 VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}
