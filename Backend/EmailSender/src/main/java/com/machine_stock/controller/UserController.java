@@ -19,7 +19,7 @@ public class UserController
 {
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<HttpResponse> createUser(@RequestBody User user)
     {
         User newUser = userService.saveUser(user);
