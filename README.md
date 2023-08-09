@@ -1,6 +1,6 @@
 # Machine_Stock
 
-This is an example project that serves the sole purpose of advertising itself. It is capable of storing the email addresses of people who choose to subscribe for news updates, as well as returning a prediction of BTC price (or any other stock of your choice if you have right API) for the next 60 seconds (or any other customizable period of time).
+This is an example project that serves the sole purpose of advertising itself. It is capable of storing the email addresses of people who choose to subscribe for news updates, as well as returning a prediction of BTC price (or any other stock of your choice if you have right API) for the next 60 seconds (or any other desirable period of time).
 
 ![Application_Scheme drawio](https://github.com/Stee1yDan/Machine_Stock/assets/125751951/977dd227-9d22-43be-943c-e9c0b9090e05)
 
