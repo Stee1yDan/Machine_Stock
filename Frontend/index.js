@@ -2,10 +2,14 @@ const ctx = document.getElementById('myChart');
 let predictionPrice = document.getElementById('predictionPrice');
 let currentPrice = document.getElementById('currentPrice');
 let lastPredictionResult = document.getElementById('lastResult');
+let sendEmailButton = document.getElementById('emailButton');
+let emailHolder = document.getElementById('emailHolder');
 
 const requestForMinutes = new XMLHttpRequest();
 const requestForHours = new XMLHttpRequest();
+const dbRequest = new XMLHttpRequest();
 const stockURL='http://localhost:5000/getStockData';
+const saveUserURL = "http://localhost:9000/api/users";
 
 let pPrice;
 let cPrice;
@@ -24,6 +28,10 @@ let hourDelay = 1000 * 60 * 60;
 
 let stockChart = buildChart(ctx)
 
+sendEmailButton.addEventListener("click", function() {
+    sendRequest(dbRequest,saveUserURL,{email: emailHolder.value}); //TODO: Check if the email is valid
+}, false);
+
 class RequestBody
 {
     constructor(symbol, deltaTime, interval)
@@ -34,7 +42,14 @@ class RequestBody
     }
 }
 
-async function sendRequest(http, url, postObj, delay) {
+async function sendRequest(http, url, postObj) {
+    http.open("POST", url);
+    http.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    console.log(JSON.stringify(postObj));
+    http.send(JSON.stringify(postObj));
+}
+
+async function sendScheduledRequest(http, url, postObj, delay) {
     setInterval(function rec()
     {
         http.open("POST", url);
@@ -86,8 +101,8 @@ function getPriceFullArray() {
 }
 
 // API gives info with a delay, so more info has to be retrieved that is actually needed
-sendRequest(requestForHours,stockURL, new RequestBody("BTC-USD",100000,"1h"),hourDelay);
-sendRequest(requestForMinutes,stockURL,new RequestBody("BTC-USD",18000,"5m"),minuteDelay);
+sendScheduledRequest(requestForHours,stockURL, new RequestBody("BTC-USD",100000,"1h"),hourDelay);
+sendScheduledRequest(requestForMinutes,stockURL,new RequestBody("BTC-USD",18000,"5m"),minuteDelay);
 connect();
 
 function updateData(chart) {
