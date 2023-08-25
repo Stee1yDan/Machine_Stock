@@ -1,9 +1,9 @@
 const ctx = document.getElementById('myChart');
-let predictionPrice = document.getElementById('predictionPrice');
-let currentPrice = document.getElementById('currentPrice');
-let lastPredictionResult = document.getElementById('lastResult');
-let sendEmailButton = document.getElementById('emailButton');
-let emailHolder = document.getElementById('emailHolder');
+const predictionPrice = document.getElementById('predictionPrice');
+const currentPrice = document.getElementById('currentPrice');
+const lastPredictionResult = document.getElementById('lastResult');
+const sendEmailButton = document.getElementById('emailButton');
+const emailHolder = document.getElementById('emailHolder');
 
 const requestForMinutes = new XMLHttpRequest();
 const requestForHours = new XMLHttpRequest();
@@ -14,24 +14,38 @@ const saveUserURL = "http://localhost:9000/api/users";
 let pPrice;
 let cPrice;
 
+const hoursTimeInfo = [];
+const minutesTimeInfo = [];
+const secondsTimeInfo = [];
 
-let hoursTimeInfo = [];
-let minutesTimeInfo = [];
-let secondsTimeInfo = [];
+const hoursPriceInfo = [];
+const minutesPriceInfo = [];
+const secondsPriceInfo = [];
 
-let hoursPriceInfo = [];
-let minutesPriceInfo = [];
-let secondsPriceInfo = [];
+const minuteDelay = 1000 * 60 * 5;
+const hourDelay = 1000 * 60 * 60;
 
-let minuteDelay = 1000 * 60 * 5;
-let hourDelay = 1000 * 60 * 60;
-
-let stockChart = buildChart(ctx)
+const stockChart = buildChart(ctx)
 
 sendEmailButton.addEventListener("click", function() {
-    sendRequest(dbRequest,saveUserURL,{email: emailHolder.value}); //TODO: Check if the email is valid
+    if (validateEmail(emailHolder.value))
+    {
+        sendRequest(dbRequest,saveUserURL,{email: emailHolder.value});
+    }
+    else
+    {
+        alert("Provided email is not valid")
+    }
+
 }, false);
 
+function validateEmail(email) {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+}
 class RequestBody
 {
     constructor(symbol, deltaTime, interval)
@@ -58,7 +72,7 @@ async function sendScheduledRequest(http, url, postObj, delay) {
     }(), delay);
 }
 
-requestForMinutes.onreadystatechange = (e) => {
+requestForMinutes.onreadystatechange = () => {
     if (requestForMinutes.readyState > 3)
     {
         minutesTimeInfo.length = 0;
@@ -66,7 +80,7 @@ requestForMinutes.onreadystatechange = (e) => {
 
         let jsonArray1 = JSON.parse(requestForMinutes.response);
 
-        for (i = 3; i > 0; i--) {
+        for (let i = 3; i > 0; i--) {
             minutesTimeInfo.push(jsonArray1[jsonArray1.length - 1 - i].t);
             minutesPriceInfo.push(jsonArray1[jsonArray1.length - 1 - i].p)
         }
@@ -75,7 +89,7 @@ requestForMinutes.onreadystatechange = (e) => {
     }
 }
 
-requestForHours.onreadystatechange = (e) => {
+requestForHours.onreadystatechange = () => {
     if (requestForHours.readyState > 3)
     {
         hoursTimeInfo.length = 0;
@@ -83,7 +97,7 @@ requestForHours.onreadystatechange = (e) => {
 
         let jsonArray = JSON.parse(requestForHours.response);
 
-        for (i = 3; i > 0; i--) {
+        for (let i = 3; i > 0; i--) {
             hoursTimeInfo.push(jsonArray[jsonArray.length - 1 - i].t);
             hoursPriceInfo.push(jsonArray[jsonArray.length - 1 - i].p)
         }
@@ -112,7 +126,7 @@ function updateData(chart) {
 
     let dates = [];
 
-    for (i = 0; i < fullTimeArray.length; i++)
+    for (let i = 0; i < fullTimeArray.length; i++)
     {
         fullTimeArray[i] = formatDate(fullTimeArray[i])
     }
@@ -160,11 +174,11 @@ function formatDate(timestamp) {
     let formattedDate = new Date(parseInt(timestamp)).toLocaleString('ru-RU');
     return formattedDate.substring(formattedDate.indexOf(",") + 1, formattedDate.length);
 }
-function connect(locales) {
+function connect() {
     socket = new SockJS("http://localhost:8080/ws");
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (locales) {
-        stompClient.subscribe('/topic/stock-info', function (data) {
+    stompClient.connect({}, () => {
+        stompClient.subscribe('/topic/stock-info', (data) => {
             let response = JSON.parse(data.body);
             let formattedDate = formatDate(response.t)
 
