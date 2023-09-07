@@ -1,6 +1,8 @@
 spring:
   profiles:
     active: ${ACTIVE_PROFILE:dev}
+  application:
+    name: email-service
 
   datasource:
     url: jdbc:postgresql://${POSTGRES_SQL_HOST}:${POSTGRES_SQL_PORT}/${POSTGRES_SQL_DB}
@@ -41,3 +43,8 @@ spring:
 
 server:
   port: ${SERVER_PORT:8000}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone=http://eureka:password@localhost:8761/eureka:
