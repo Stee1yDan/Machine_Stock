@@ -9,11 +9,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="SendEmailExample" />
         <module name="ChatApplication" />
+        <module name="DiscoveryServer" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="DiscoveryServer" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
