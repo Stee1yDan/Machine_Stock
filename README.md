@@ -2,7 +2,7 @@
 
 This is an example project that serves the sole purpose of advertising itself. It is capable of storing the email addresses of people who choose to subscribe for news updates, as well as returning a prediction of BTC price (or any other stock of your choice if you have right API) for the next 60 seconds (or any other desirable period of time).
 
-![Application_Scheme](https://github.com/Stee1yDan/Machine_Stock/assets/125751951/1f22a8aa-24fe-4949-a748-1c9c1279658f)
+![Application_Scheme (1)](https://github.com/Stee1yDan/Microservices_App/assets/125751951/ac4cb908-501f-4e93-b243-16929cf172e4)
 
 ## Java module
 
